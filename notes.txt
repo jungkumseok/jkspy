@@ -1,0 +1,10 @@
+#mkdir /path/to/your/project
+#cd /path/to/your/project
+#git init
+
+git remote add origin https://jungkumseok@bitbucket.org/jungkumseok/jkspy.git
+
+echo "Kumseok Jung" >> contributors.txt
+git add contributors.txt
+git commit -m 'Initial commit with contributors'
+git push -u origin master

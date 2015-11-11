@@ -1,0 +1,16 @@
+import hashlib
+from Crypto.PublicKey import RSA
+
+def hashstr(plaintext, method='sha512'):
+    if method in hashlib.algorithms_guaranteed:
+        return getattr(hashlib, method)(plaintext.encode('utf-8')).hexdigest()
+    else:
+        raise AttributeError('Hash algorithm ['+methcdod+'] is not supported')
+
+def main():
+    key = RSA.generate(2048)
+    print(key)
+    print(key.publickey)
+    print(">>> Routine End")
+
+main()
