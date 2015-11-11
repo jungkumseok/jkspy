@@ -7,7 +7,7 @@ setup(
   author = 'Kumseok Jung',
   author_email = 'jungkumseok@gmail.com',
   url = 'https://github.com/jungkumseok/jkspy',
-  download_url = 'https://github.com/jungkumseok/jks/tarball/0.1', # I'll explain this in a second
+  download_url = 'https://github.com/jungkumseok/jkspy/archive/0.1.tar.gz', # I'll explain this in a second
   keywords = ['testing', 'utility'], 
   classifiers = [],
 )
