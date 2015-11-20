@@ -65,9 +65,9 @@ def sdecrypt(passphrase, ciphertext, mode='CFB'):
 	return remove_padding( cipher.decrypt(ciphertext[AES.block_size:]) )
 
 KEYPAIR_ALGORITHMS = { 'RSA':RSA }
-def make_keypair(method='RSA'):
+def make_keypair(method='RSA', bits=2048):
 	if method.upper() in KEYPAIR_ALGORITHMS.keys():
-		keypair = KEYPAIR_ALGORITHMS[method.upper()].generate(2048)
+		keypair = KEYPAIR_ALGORITHMS[method.upper()].generate(bits)
 		# print("New keypair generated")
 		# print(type(keypair))
 		return keypair
@@ -80,10 +80,19 @@ def encrypt(keypair, plaintext):
 def decrypt(keypair, ciphertext):
 	return keypair.decrypt(ciphertext)
 
-def sign(keypair, message):
-	mhash = get_hash(message, 'sha256', False)
-	print(mhash)
+def sign(keypair, message, isFile=False):
+	if isFile:
+		mhash = get_checksum(message, 'sha256', False)
+	else:
+		mhash = get_hash(message, 'sha256', False)
+# 	print(mhash)
 	return keypair.sign(mhash, '')
+
+def verify(publickey, message, signature, isFile=False):
+	if isFile:
+		return publickey.verify( get_checksum(message, 'sha256', False), signature )
+	else:
+		return publickey.verify( get_hash(message, 'sha256', False), signature )
 
 # def verify(keypair, message):
 # 	mhash = get_hash(message, 'sha256', False)
