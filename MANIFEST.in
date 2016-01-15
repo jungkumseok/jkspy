@@ -1,0 +1,3 @@
+recursive-include jkspy/modules *
+recursive-include jkspy/apps *
+recursive-include jkspy/scripts *
