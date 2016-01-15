@@ -3,6 +3,7 @@ from Crypto import Random
 from Crypto.Hash import MD5, SHA, SHA256, SHA512, HMAC
 from Crypto.Cipher import AES
 from Crypto.PublicKey import RSA
+from jkspy.helpers import writeFile, readFile
 
 HASH_ALGORITHMS = { 'MD5':MD5,
 					'SHA':SHA,
@@ -39,11 +40,12 @@ def get_checksum(filepath, method='md5', hex=True):
 
 def add_padding(message, blocksize):
 	return message + (blocksize - len(message) % blocksize) * chr(blocksize - len(message) % blocksize)
+
 def remove_padding(message):
 	return message[:-ord(message[len(message)-1:])]
 
-def b2hex(bytes):
-	return ''.join([hex(c)[2:] for c in bytes]).upper()
+def b2hex(bytestr):
+	return ''.join([hex(c)[2:] for c in bytestr]).upper()
 
 def hex2b(hexstr):
 	hexbytes = [ hexstr[2*i] + hexstr[2*i+1] for i in range(0, int( len(hexstr)/2 ) ) ]	
@@ -62,7 +64,7 @@ def sdecrypt(passphrase, ciphertext, mode='CFB'):
 	iv = ciphertext[:AES.block_size]
 	# print(iv)
 	cipher = AES.new( get_hash(passphrase, 'sha256', False), getattr(AES, 'MODE_'+mode), iv ) #Block Size (MD5) = 32
-	return remove_padding( cipher.decrypt(ciphertext[AES.block_size:]) )
+	return remove_padding( cipher.decrypt(ciphertext[AES.block_size:]) ).decode()
 
 KEYPAIR_ALGORITHMS = { 'RSA':RSA }
 def make_keypair(method='RSA', bits=2048):
@@ -74,8 +76,43 @@ def make_keypair(method='RSA', bits=2048):
 	else:
 		raise AttributeError('Keygen algorithm ['+method.upper()+'] is not supported')
 
-def encrypt(keypair, plaintext):
-	return keypair.publickey().encrypt(plaintext.encode('utf-8'), 32)
+def save_keypair(keypair, filepath, format='PEM'):
+	pw = input("Password for the keypair (leave blank if encrypting the keys is unnecessary) >> ")
+	if pw:
+		prvkey = keypair.exportKey(format, pw)
+	else:
+		prvkey = keypair.exportKey()
+	writeFile(filepath+'.private', prvkey, True)
+
+	pubkey = keypair.publickey().exportKey()
+	writeFile(filepath+'.public', pubkey, True)
+	
+	print("--------------------------")
+	print(" Generating RSA keypair")
+	print("--------------------------")
+	print(prvkey)
+	print('    > Private key saved as '+filepath+'.private')
+	print('--------------------------')
+	print(pubkey)
+	print('    > Public key saved as '+filepath+'.public')
+	print('--------------------------')
+
+def open_keypair(keypath):
+	keystr = readFile(keypath, True)
+	try:
+		keys = RSA.importKey(keystr)
+	except ValueError:
+		print("Enter password for the private key")
+		pw = input(' >> ')
+		try:
+			keys = RSA.importKey(keystr, pw)
+		except ValueError:
+			print("...Wrong password")
+			raise ValueError("Wrong Password")
+	return keys
+
+def encrypt(pubkey, plaintext):
+	return pubkey.encrypt(plaintext.encode('utf-8'), 32)[0]
 
 def decrypt(keypair, ciphertext):
 	return keypair.decrypt(ciphertext)
@@ -101,7 +138,7 @@ def verify(publickey, message, signature, isFile=False):
 def test_rsa():
 	print("\n\n>>> Testing RSA")
 	keypair = make_keypair()
-	ciphertext = encrypt(keypair, 'Hello World')
+	ciphertext = encrypt(keypair.publickey(), 'Hello World')
 	print("CipherByte: "+ciphertext.__str__())
 
 	plaintext = decrypt(keypair, ciphertext)
