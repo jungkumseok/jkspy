@@ -1,11 +1,10 @@
 from distutils.core import setup
 setup(
   name = 'jkspy',
-  packages = ['jkspy'],
-  package_data = {'modules':['*'],
-                  'apps':['*'],
-                  'scripts':['*'],
-                  },
+  packages = ['jkspy',
+              'jkspy.modules',
+              'jkspy.apps',
+              'jkspy.scripts'],
   version = '0.1.7',
   description = 'Python utilities for doing computer stuff',
   author = 'Kumseok Jung',
