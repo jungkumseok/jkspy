@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 import sys
 try:
-    from jkspy.modules.hash import get_checksum
+    from jkspy.modules.crypto import get_checksum
 
     def help(alert):
         print("\n"+alert)

@@ -1,5 +1,5 @@
 import os, json
-from jkspy.modules import hash
+from jkspy.modules import crypto
 
 class Saveable():
     def __init__(self, *args, **kwargs):
