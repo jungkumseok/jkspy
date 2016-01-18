@@ -1,5 +1,5 @@
 from distutils.core import setup
-VERSION = '0.2.5'
+VERSION = '0.2.6'
 setup(
   name = 'jkspy',
   install_requires = ['pytz', 'Pillow'],
