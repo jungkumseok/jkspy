@@ -1,5 +1,5 @@
 from distutils.core import setup
-VERSION = '0.2.4'
+VERSION = '0.2.5'
 setup(
   name = 'jkspy',
   install_requires = ['pytz', 'Pillow'],
@@ -13,7 +13,7 @@ setup(
 #                                       'checksum = jkspy.scripts.checksum',
 #                                       ],
 #                   },
-  data_files = [('', 'LICENSE.txt')],
+#   data_files = [('', 'LICENSE.txt')],
   version = VERSION,
   description = 'Python utilities for doing computer stuff',
   author = 'Kumseok Jung',
