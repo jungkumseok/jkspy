@@ -1,5 +1,5 @@
 from distutils.core import setup
-VERSION = '0.2.6'
+VERSION = '0.2.7'
 setup(
   name = 'jkspy',
   install_requires = ['pytz', 'Pillow'],
@@ -7,7 +7,7 @@ setup(
               'jkspy.modules',
               'jkspy.apps'],
   package_data = {'jkspy':['scripts/*']},
-  scripts = ['jkspy/scripts/checksum'],
+  scripts = ['jkspy/scripts/checksum', 'jkspy/scripts/jkspy'],
 #   entry_points = {
 #                   'console_scripts': [
 #                                       'checksum = jkspy.scripts.checksum',
