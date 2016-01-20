@@ -1,11 +1,12 @@
 from distutils.core import setup
-VERSION = '0.2.8'
+VERSION = '0.2.9'
 setup(
   name = 'jkspy',
   install_requires = ['pytz', 'Pillow'],
   packages = ['jkspy',
               'jkspy.modules',
-              'jkspy.apps'],
+              'jkspy.apps',
+              'jkspy.django',],
   package_data = {'jkspy':['scripts/*']},
   scripts = ['jkspy/scripts/checksum', 'jkspy/scripts/jkspy'],
 #   entry_points = {

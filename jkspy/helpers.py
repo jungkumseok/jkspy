@@ -1,4 +1,11 @@
-import os, random, string, datetime, base64, requests, pytz, PIL, re, json, io
+import os, random, string, datetime, base64, \
+        requests, re, json, io, importlib, \
+        pytz, PIL
+
+## Code Helpers
+def importFromString(pyurl):
+    """ Imports python module from the string argument """
+    return importlib.import_module(pyurl)
 
 ## File functions
 def readFile(filepath, bytestring=False):
@@ -41,3 +48,34 @@ def shuffleList(old_list):
     new_list = old_list.copy()
     random.shuffle(new_list)
     return new_list
+
+
+#### Validators
+#### returns True or False
+def validateEmail(email):
+    validated = re.match('^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$',
+                         email)
+    return not not validated
+
+#### For Debugging
+def dprint(obj, depth=2, obj_key='', indent=''):
+    """ for debugging purposes d(ebug)print """
+    if depth >= 0:
+        if hasattr(obj, '__dict__') or type(obj) == dict:
+            if type(obj) == dict:
+                items = obj.items()
+            else:
+                items = obj.__dict__.items()            
+            print(indent+'('+str(type(obj))+') '+obj_key+': {')
+            for key, val in items:
+                dprint(val, depth-1, key, indent+'    ')
+            print(indent+'},')
+        
+        elif hasattr(obj, '__call__'):
+            print(indent+'(function) '+obj_key+': '+str(obj)+',')
+                
+        else:
+            print(indent+'('+str(type(obj))+') '+obj_key+': '+str(obj)+',')
+            
+    #     return { key: getattr(obj, key) for key in dir(obj) }
+        return obj
