@@ -2,6 +2,8 @@ import sys
 from jkspy.modules import crypto
 from Crypto.PublicKey import RSA
 from jkspy.helpers import readFile, writeFile
+""" Currently, the output to the console is done by the
+    print() function, and not by the return statement """
 
 def test():
     print(">>> Running jkspy TEST")
@@ -45,3 +47,15 @@ def decrypt(prvkeypath, filepath):
         writeFile(filepath+'.plain', plain)
     except ValueError:
         print("Could not decrypt ["+filepath+"]")
+        
+def sencrypt(passphrase, filepath):
+    plaintext = readFile(filepath)
+    ciphertext = crypto.sencrypt(passphrase, plaintext)
+    print( ciphertext )
+    writeFile(filepath+'.locked', ciphertext, bytestring=True)
+
+def sdecrypt(passphrase, filepath):
+    ciphertext = readFile(filepath, bytestring=True)
+    plaintext = crypto.sdecrypt(passphrase, ciphertext)
+    print( plaintext )
+    writeFile(filepath+'.unlocked', plaintext)
