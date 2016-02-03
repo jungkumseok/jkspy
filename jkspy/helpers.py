@@ -1,4 +1,4 @@
-import os, random, string, datetime, base64, \
+import os, random, math, string, datetime, base64, \
         requests, re, json, io, importlib, \
         pytz, PIL
 
@@ -79,3 +79,9 @@ def dprint(obj, depth=2, obj_key='', indent=''):
             
     #     return { key: getattr(obj, key) for key in dir(obj) }
         return obj
+
+def strToInt (s):
+    return int.from_bytes(s.encode(), 'little')
+
+def intToStr (n):
+    return n.to_bytes(math.ceil(n.bit_length() / 8), 'little').decode()
