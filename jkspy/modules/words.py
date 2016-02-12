@@ -1,4 +1,5 @@
-import random
+import math, hashlib
+from numpy.random import RandomState
 from collections import OrderedDict
 from jkspy.helpers import strToInt, intToStr
 
@@ -39,25 +40,28 @@ COMPOSITE_VOWELS = ['ae', 'ai', 'ao', 'au', 'ay',
 
 class Generator():
     seed = None
-    def __init__(self, seed=None):
+    random = None
+    def __init__(self, seed=1):
         super(Generator, self).__init__()
-        if seed:
-            random.seed(seed)
-            self.seed = seed
+        self.random = RandomState(seed)
+        self.seed = seed
+        
+    def reseed(self):
+        self.random = RandomState(self.seed)
         
     def randSyllable(self):
-        c1_dice = ( random.random() < 0.91 ) #Chance that a regular consonant will start the syllable
-        s1_dice = ( random.random() < 0.05 ) #Chance that a special conjunction consonant is used
-        v1_dice = ( random.random() < 0.85 ) #Chance that a regular vowel will be used
-        c2_add_dice = ( random.random() < 0.28 ) #Chance that it has an ending consonant
-        c2_dice = ( random.random() < 0.91 ) #Chance that a regular consonant will end the syllable
-        s2_dice = ( random.random() < 0.03 ) #Chance that the ending has an addon consonant
+        c1_dice = ( self.random.random_sample() < 0.91 ) #Chance that a regular consonant will start the syllable
+        s1_dice = ( self.random.random_sample() < 0.05 ) #Chance that a special conjunction consonant is used
+        v1_dice = ( self.random.random_sample() < 0.85 ) #Chance that a regular vowel will be used
+        c2_add_dice = ( self.random.random_sample() < 0.28 ) #Chance that it has an ending consonant
+        c2_dice = ( self.random.random_sample() < 0.91 ) #Chance that a regular consonant will end the syllable
+        s2_dice = ( self.random.random_sample() < 0.03 ) #Chance that the ending has an addon consonant
         
-        c1 = random.choice(REGULAR_CONSONANTS) if c1_dice else random.choice(COMPOSITE_CONSONANTS)
-        s1 = random.choice(SPECIAL_CONSONANTS) if s1_dice else ''
-        v1 = random.choice(REGULAR_VOWELS) if v1_dice else random.choice(COMPOSITE_VOWELS)
-        c2 = ( random.choice(REGULAR_CONSONANTS) if c2_dice else random.choice(ENDING_CONSONANTS) ) if c2_add_dice else ''
-        s2 = random.choice(ADDON_ENDING_CONSONANTS) if s2_dice else ''
+        c1 = self.random.choice(REGULAR_CONSONANTS) if c1_dice else self.random.choice(COMPOSITE_CONSONANTS)
+        s1 = self.random.choice(SPECIAL_CONSONANTS) if s1_dice else ''
+        v1 = self.random.choice(REGULAR_VOWELS) if v1_dice else self.random.choice(COMPOSITE_VOWELS)
+        c2 = ( self.random.choice(REGULAR_CONSONANTS) if c2_dice else self.random.choice(ENDING_CONSONANTS) ) if c2_add_dice else ''
+        s2 = self.random.choice(ADDON_ENDING_CONSONANTS) if s2_dice else ''
         syllable = c1+s1+v1+c2+s2
 #         print(syllable)
         return syllable
@@ -77,9 +81,9 @@ class Generator():
     
     def randParagraph(self):
         paragraph = []
-        rand_wordcount = [ random.randint(3, 6) for i in range(0, random.randint( 4, 5 )) ]
+        rand_wordcount = [ self.random.randint(3, 6) for i in range(0, self.random.randint( 4, 5 )) ]
         for words in rand_wordcount:
-            rand_meter = [ random.randint(1, 4) for i in range(0, words) ]
+            rand_meter = [ self.random.randint(1, 4) for i in range(0, words) ]
             sentence = self.randSentence(rand_meter)
             paragraph.append(sentence)
         return '. '.join(paragraph)
@@ -100,5 +104,21 @@ class Generator():
         return ( ordered_e2r, ordered_r2e )
     
     def convertWord(self, word):
-        print( strToInt(word) )
-        return word
+        word = word.lower()
+        saved_state = self.random.get_state()
+        
+        # Word mapping method : md5
+        # To make it more natural, this mapping should be updated
+        # to reflect natural language patterns
+        md5 = hashlib.md5(bytes(word, encoding='utf-8'))
+        wordseed = ( self.seed + int.from_bytes(md5.digest(), 'little') ) % (2**31)
+#         print(wordseed)
+        self.random.seed( wordseed )
+        randword = self.randWord( math.ceil( abs( self.random.normal(2, 1) ) ) )
+        self.random.set_state(saved_state)
+        return randword
+     
+    def convertSentence(self, sentence):
+        words = sentence.split()
+        converted = [self.convertWord(word) for word in words]
+        return ' '.join(converted)

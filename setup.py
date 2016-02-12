@@ -2,7 +2,7 @@ from distutils.core import setup
 VERSION = '0.3.1'
 setup(
   name = 'jkspy',
-  install_requires = ['pytz', 'Pillow'],
+  install_requires = ['pytz', 'Pillow', 'numpy'],
   packages = ['jkspy',
               'jkspy.modules',
               'jkspy.apps',
