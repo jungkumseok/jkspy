@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>jkspy by jungkumseok</title>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+          <h1>jkspy</h1>
+          <h2>python utilities for coding and doing computer stuff</h2>
+        </header>
+
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/jungkumseok/jkspy/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/jungkumseok/jkspy/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/jungkumseok/jkspy" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        <section id="main_content">
+          <h2>
+<a id="jkspy---python-utilities" class="anchor" href="#jkspy---python-utilities" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>jkspy - <em>Python</em> utilities</h2>
+
+<h4>
+<a id="dependencies" class="anchor" href="#dependencies" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Dependencies</h4>
+
+<p>Upon installation, jkspy will install the following Python modules: [ <em>pytz, Pillow</em> ]</p>
+
+<h4>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h4>
+
+<h5>
+<a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirements</h5>
+
+<p>The following should be installed before you install jkspy:</p>
+
+<ol>
+<li>Python 3.4 and up + Pip3 + development libraries</li>
+</ol>
+
+<pre><code>    user@localhost:~$ sudo apt-get install python3-pip python3-dev python3-setuptools 
+</code></pre>
+
+<ol>
+<li>Pillow dependencies:</li>
+</ol>
+
+<pre><code>    user@localhost:~$ sudo apt-get install libtiff5-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev tcl8.6-dev tk8.6-dev python-tk
+</code></pre>
+
+<ul>
+<li>
+<em>jkspy</em> works strictly on Python 3 since the code assumes python <em>str</em> to be unicode <em>str</em> and <em>int</em> to behave like <em>long</em>
+</li>
+</ul>
+
+<h5>
+<a id="installing-jkspy" class="anchor" href="#installing-jkspy" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installing <em>jkspy</em>
+</h5>
+
+<ul>
+<li>Method 1: Getting it from PyPI</li>
+</ul>
+
+<pre><code>    user@localhost:~$ pip3 install jkspy
+</code></pre>
+
+<ul>
+<li>Method 2: Installing from this git repository</li>
+</ul>
+
+<pre><code>    user@localhost:~$ git clone https://github.com/jungkumseok/jkspy.git
+    user@localhost:~$ cd jkspy
+    user@localhost:~$ python3 setup.py install
+</code></pre>
+
+<p>if you get permission error use <strong>sudo</strong> in front to install as root</p>
+
+<h4>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h4>
+
+<ul>
+<li>
+<p>Method 1: As a python module</p>
+
+<p><em>example.py</em></p>
+</li>
+</ul>
+
+<pre><code>    from jkspy.modules import crypto
+    secret = crypto.sencrypt('MyN00bPa$$w0rd', "Don't show anyone")
+    print(secret)
+    unlocked_secret = crypto.sdecrypt('MyN00bPa$$w0rd', secret)
+    print(unlocked_secret)
+</code></pre>
+
+<ul>
+<li>
+<p>Method 2: As a bash command</p>
+
+<p>jkspy installs two bash scripts: [ <em>jkspy, checksum</em> ].
+<em>checksum</em> is just a shortcut command and the same can be done by <em>jkspy checksum</em>.
+By default <em>jkspy</em> command will be able to execute functions defined in <em>jkspy/cmdutils.py</em></p>
+
+<p><em>assuming ~/example.file</em></p>
+</li>
+</ul>
+
+<pre><code>    # checksum example - using jkspy
+    user@localhost:~$ jkspy checksum example.file
+    e59ff97941044f85df5297e1c302d260
+
+    user@localhost:~$ jkspy checksum example.file sha256
+    d2a84f4b8b650937ec8f73cd8be2c74add5a911ba64df27458ed8229da804a26
+
+    # checksum example - using checksum
+    user@localhost:~$ checksum example.file
+    e59ff97941044f85df5297e1c302d260
+
+    user@localhost:~$ checksum example.file sha256
+    d2a84f4b8b650937ec8f73cd8be2c74add5a911ba64df27458ed8229da804a26
+
+    # crypto example - sencrypt
+    user@localhost:~$ jkspy sencrypt MyN00bPa$$w0rd example.file
+    b"e1\x9b-v\xa3&lt;\xb5\xb4'P\xedU\x00\x0e\x1e\x9c\xcc\xad\xea\xa5\x03\x91\x14Q\x19\x83\xf4\x83\xa6\xc1&amp;\x08\x14\x0b\x7fOgd`'\x08\x7f\xe8l\xbb:\x92"
+    File [example.file.locked] successfully created.
+
+    # crypto example - sdecrypt
+    user@localhost:~$ jkspy sdecrypt MyN00bPa$$w0rd example.file.locked
+    Hello World
+
+    File [example.file.locked.unlocked] successfully created.
+</code></pre>
+
+<h4>
+<a id="enjoy-" class="anchor" href="#enjoy-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Enjoy :)</h4>
+        </section>
+
+        <footer>
+          jkspy is maintained by <a href="https://github.com/jungkumseok">jungkumseok</a><br>
+          This page was generated by <a href="https://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+        
+      </div>
+    </div>
+  </body>
+</html>
