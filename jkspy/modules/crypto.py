@@ -45,11 +45,10 @@ def remove_padding(message):
 	return message[:-ord(message[len(message)-1:])]
 
 def b2hex(bytestr):
-	return ''.join([hex(c)[2:] for c in bytestr]).upper()
+	return ''.join([hex(c)[2:].zfill(2) for c in bytestr])
 
 def hex2b(hexstr):
-	hexbytes = [ hexstr[2*i] + hexstr[2*i+1] for i in range(0, int( len(hexstr)/2 ) ) ]	
-	return bytes([int(c, 16) for c in hexbytes])
+	return bytes([ int(('0x'+hexstr[2*i:2*i+2]), 16) for i in range(0, int( len(hexstr)/2 ) ) ])
 
 def make_key(key_size=16):
 	return Random.new().read(key_size)
