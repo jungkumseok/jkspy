@@ -20,5 +20,9 @@ class CryptoTests(unittest.TestCase):
             deciphered = crypto.sdecrypt(passphrase, ciphertext)
         self.assertEqual(plaintext, deciphered)
         
+    def test_symmetric_byte_hex_conversion(self):
+        sequence = crypto.randbytes(32)
+        tohex = b2hex(sequence)
+        
 if __name__ == '__main__':
     unittest.main()

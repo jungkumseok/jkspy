@@ -5,6 +5,9 @@ from Crypto.Cipher import AES
 from Crypto.PublicKey import RSA
 from jkspy.helpers import writeFile, readFile
 
+def randbytes(length):
+	return Random.new().read(length)
+
 HASH_ALGORITHMS = { 'MD5':MD5,
 					'SHA':SHA,
 					'SHA256':SHA256,
@@ -44,6 +47,24 @@ def add_padding(message, blocksize):
 def remove_padding(message):
 	return message[:-ord(message[len(message)-1:])]
 
+HEXBIN_MAPPING = { '0' : '0000', '1' : '0001', '2' : '0010', '3' : '0011',
+	 	   '4' : '0100', '5' : '0101', '6' : '0110', '7' : '0111',
+		   '8' : '1000', '9' : '1001', 'a' : '1010', 'b' : '1011',
+		   'c' : '1100', 'd' : '1101', 'e' : '1110', 'f' : '1111' }
+BINHEX_MAPPING = { val : key for key, val in HEXBIN_MAPPING.items() }
+def hex2bin(hexstr):
+	binstr = ''
+	for c in hexstr:
+		binstr += HEXBIN_MAPPING[c]
+	return binstr
+
+def bin2hex(binstr):
+	hexstr = ''
+	for i in range(0, int(len(binstr) / 4)):
+		subbin = binstr[i*4:i*4+4]
+		hexstr += BINHEX_MAPPING[subbin]
+	return hexstr
+
 def b2hex(bytestr):
 	return ''.join([hex(c)[2:].zfill(2) for c in bytestr])
 
@@ -51,18 +72,19 @@ def hex2b(hexstr):
 	return bytes([ int(('0x'+hexstr[2*i:2*i+2]), 16) for i in range(0, int( len(hexstr)/2 ) ) ])
 
 def make_key(key_size=16):
-	return Random.new().read(key_size)
+	return randbytes(key_size)
 
 def sencrypt(passphrase, plaintext, mode='CFB'):
-	iv = Random.new().read(AES.block_size)
-	# print(iv)
-	cipher = AES.new( get_hash(passphrase, 'sha256', False), getattr(AES, 'MODE_'+mode), iv ) #Block Size (MD5) = 32
-	return iv + cipher.encrypt( add_padding( plaintext, len( get_hash(passphrase, 'md5') ) ) )
+	iv = randbytes(AES.block_size) #iv: 16 byte random salt (32 hex digits)
+	key = get_hash(passphrase, 'sha256', False) #key: 32 byte sha256 of passphrase
+	cipher = AES.new( key, getattr(AES, 'MODE_'+mode), iv )
+	paddedtext = add_padding( plaintext, len( iv ) )
+	return iv + cipher.encrypt( paddedtext )
 
 def sdecrypt(passphrase, ciphertext, mode='CFB'):
-	iv = ciphertext[:AES.block_size]
-	# print(iv)
-	cipher = AES.new( get_hash(passphrase, 'sha256', False), getattr(AES, 'MODE_'+mode), iv ) #Block Size (MD5) = 32
+	iv = ciphertext[:AES.block_size] #iv: 16 byte random salt (32 hex digits)
+	key = get_hash(passphrase, 'sha256', False) #key: 32 byte sha256 of passphrase
+	cipher = AES.new( key, getattr(AES, 'MODE_'+mode), iv )
 	return remove_padding( cipher.decrypt(ciphertext[AES.block_size:]) ).decode()
 
 KEYPAIR_ALGORITHMS = { 'RSA':RSA }
