@@ -2,10 +2,22 @@ import os, random, math, string, datetime, base64, \
         requests, re, json, io, importlib, \
         pytz, PIL
 
-## Code Helpers
+## Python Code Helpers
 def importFromString(pyurl):
     """ Imports python module from the string argument """
     return importlib.import_module(pyurl)
+
+def getattr_deep(obj, attrstr):
+    val = obj
+    for attr in attrstr.split('.'):
+        val = getattr(val, attr)
+    return val
+
+def setattr_deep(obj, attrstr, new_val):
+    val = obj
+    for attr in attrstr.split('.')[:-1]:
+        val = getattr(val, attr)
+    return setattr(val, attrstr.split('.')[-1], new_val)
 
 ## File functions
 def readFile(filepath, bytestring=False):
@@ -49,6 +61,9 @@ def shuffleList(old_list):
     random.shuffle(new_list)
     return new_list
 
+#### Randoms
+def randomKey(digits=32, charset=string.ascii_letters+string.digits):
+    return ''.join(random.SystemRandom().choice(charset) for _ in range(int(digits)))
 
 #### Validators
 #### returns True or False

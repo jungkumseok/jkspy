@@ -22,7 +22,12 @@ class CryptoTests(unittest.TestCase):
         
     def test_symmetric_byte_hex_conversion(self):
         sequence = crypto.randbytes(32)
-        tohex = b2hex(sequence)
+        tohex = crypto.b2hex(sequence)
+        tob = crypto.hex2b(tohex)
+        self.assertEqual(sequence, tob)
+        
+        tobtohex = crypto.b2hex(tob)
+        self.assertEqual(tohex, tobtohex)
         
 if __name__ == '__main__':
     unittest.main()

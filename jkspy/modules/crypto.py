@@ -41,12 +41,6 @@ def get_checksum(filepath, method='md5', hex=True):
 	else:
 		raise AttributeError('Hash algorithm ['+method.upper()+'] is not supported')
 
-def add_padding(message, blocksize):
-	return message + (blocksize - len(message) % blocksize) * chr(blocksize - len(message) % blocksize)
-
-def remove_padding(message):
-	return message[:-ord(message[len(message)-1:])]
-
 HEXBIN_MAPPING = { '0' : '0000', '1' : '0001', '2' : '0010', '3' : '0011',
 	 	   '4' : '0100', '5' : '0101', '6' : '0110', '7' : '0111',
 		   '8' : '1000', '9' : '1001', 'a' : '1010', 'b' : '1011',
@@ -74,16 +68,22 @@ def hex2b(hexstr):
 def make_key(key_size=16):
 	return randbytes(key_size)
 
+def add_padding(message, blocksize):
+	return message + (blocksize - len(message) % blocksize) * chr(blocksize - len(message) % blocksize)
+
+def remove_padding(message):
+	return message[:-ord(message[len(message)-1:])]
+
 def sencrypt(passphrase, plaintext, mode='CFB'):
 	iv = randbytes(AES.block_size) #iv: 16 byte random salt (32 hex digits)
-	key = get_hash(passphrase, 'sha256', False) #key: 32 byte sha256 of passphrase
+	key = get_hash(passphrase, 'sha256', hex=False) #key: 32 byte sha256 of passphrase
 	cipher = AES.new( key, getattr(AES, 'MODE_'+mode), iv )
 	paddedtext = add_padding( plaintext, len( iv ) )
 	return iv + cipher.encrypt( paddedtext )
 
 def sdecrypt(passphrase, ciphertext, mode='CFB'):
 	iv = ciphertext[:AES.block_size] #iv: 16 byte random salt (32 hex digits)
-	key = get_hash(passphrase, 'sha256', False) #key: 32 byte sha256 of passphrase
+	key = get_hash(passphrase, 'sha256', hex=False) #key: 32 byte sha256 of passphrase
 	cipher = AES.new( key, getattr(AES, 'MODE_'+mode), iv )
 	return remove_padding( cipher.decrypt(ciphertext[AES.block_size:]) ).decode()
 
